@@ -1,0 +1,84 @@
+# Azure pipeline for PyLops
+
+# Only build the master branch, tags, and PRs (on by default) to avoid building random
+# branches in the repository until a PR is opened.
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+    - refs/tags/*
+
+jobs:
+
+
+# Mac
+########################################################################################
+- job:
+  displayName: 'Mac'
+
+  pool:
+    vmImage: 'macOS-15-arm64'
+
+  variables:
+    NUMBA_NUM_THREADS: 1
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'
+      architecture: 'arm64'
+
+  - script: |
+      curl -LsSf https://astral.sh/uv/install.sh | sh
+      echo "##vso[task.prependpath]$HOME/.cargo/bin"
+    displayName: 'Install uv'
+
+  - script: |
+      uv sync --locked \
+        --extra advanced \
+        --extra stat \
+        --extra deep \
+        --all-groups
+    displayName: 'Install dependencies andn pylops'
+
+  - script: |
+      uv run pytest --color=yes pytests/
+    condition: succeededOrFailed()
+    displayName: 'Run tests'
+
+
+# Linux
+########################################################################################
+- job:
+  displayName: 'Linux'
+
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  variables:
+    NUMBA_NUM_THREADS: 1
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'
+      architecture: 'x64'
+
+  - script: |
+      curl -LsSf https://astral.sh/uv/install.sh | sh
+      echo "##vso[task.prependpath]$HOME/.cargo/bin"
+    displayName: 'Install uv'
+
+  - script: |
+      uv sync --locked \
+        --extra advanced \
+        --extra stat \
+        --extra deep \
+        --all-groups
+    displayName: 'Install dependencies andn pylops'
+
+  - script: |
+      uv run pytest --color=yes pytests/
+    condition: succeededOrFailed()
+    displayName: 'Run tests'

@@ -1,0 +1,10 @@
+exclude .*
+exclude Makefile
+exclude environment*
+exclude requirements*
+exclude azure-pipelines.yml readthedocs.yml
+recursive-exclude docs *
+recursive-exclude examples *
+recursive-exclude pytests *
+recursive-exclude testdata *
+recursive-exclude tutorials *

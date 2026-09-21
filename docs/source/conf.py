@@ -1,0 +1,161 @@
+import datetime
+import os
+import sys
+
+from sphinx_gallery.sorting import ExampleTitleSortKey
+
+from pylops import __version__
+
+# Sphinx needs to be able to import the package to use autodoc and get the version number
+sys.path.insert(0, os.path.abspath("../../pylops"))
+
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.doctest",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.intersphinx",
+    "matplotlib.sphinxext.plot_directive",
+    "numpydoc",
+    "nbsphinx",
+    "sphinx_design",
+    "sphinx_iconify",
+    "sphinx_gallery.gen_gallery",
+    "sphinxemoji.sphinxemoji",
+]
+
+# intersphinx configuration
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+    "numpy": ("https://docs.scipy.org/doc/numpy/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    "cupy": ("https://docs.cupy.dev/en/stable/", None),
+    "jax": ("https://jax.readthedocs.io/en/latest", None),
+    "sklearn": ("http://scikit-learn.org/stable/", None),
+    "pandas": ("http://pandas.pydata.org/pandas-docs/stable/", None),
+    "matplotlib": ("https://matplotlib.org/", None),
+    "pyfftw": ("https://pyfftw.readthedocs.io/en/latest/", None),
+    "spgl1": ("https://spgl1.readthedocs.io/en/latest/", None),
+    "pymc": ("https://www.pymc.io/", None),
+    "arviz": ("https://python.arviz.org/en/latest/", None),
+    "curvelets": ("https://curvelets.readthedocs.io/en/latest/", None),
+}
+
+# Generate autodoc stubs with summaries from code
+autosummary_generate = True
+
+# Include Python objects as they appear in source files
+autodoc_member_order = "bysource"
+
+# Default flags used by autodoc directives
+autodoc_default_flags = ["members"]
+
+# Avoid showing typing annotations in doc
+autodoc_typehints = "none"
+
+numpydoc_show_class_members = False
+numpydoc_show_inherited_class_members = False
+numpydoc_class_members_toctree = False
+
+sphinx_gallery_conf = {
+    # Path to examples scripts
+    "examples_dirs": [
+        "../../examples",
+        "../../tutorials",
+    ],
+    # Path where to save gallery generated examples
+    "gallery_dirs": ["gallery", "tutorials"],
+    "filename_pattern": r"\.py",
+    # Examples to skip when building the gallery
+    "ignore_pattern": r"plot_dtcwt\.py$",
+    # Remove the "Download all examples" button from the top level gallery
+    "download_all_examples": False,
+    # Sort gallery example by file name instead of number of lines (default)
+    "within_subsection_order": ExampleTitleSortKey,
+    # directory where function granular galleries are stored
+    "backreferences_dir": "api/generated/backreferences",
+    # Modules for which function level galleries are created.
+    "doc_module": "pylops",
+    # Insert links to documentation of objects in the examples
+    "reference_url": {"pylops": None},
+}
+
+# Always show the source code that generates a plot
+plot_include_source = True
+plot_formats = ["png"]
+
+# Sphinx project configuration
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "**.ipynb_checkpoints", "**.ipynb", "**.md5"]
+source_suffix = ".rst"
+
+
+# The encoding of source files.
+source_encoding = "utf-8-sig"
+master_doc = "index"
+
+# General information about the project
+year = datetime.date.today().year
+project = "PyLops"
+copyright = f"{year}, PyLops Development Team"
+
+# Version
+version = __version__
+if len(version.split("+")) > 1 or version == "unknown":
+    version = "dev"
+
+# These enable substitutions using |variable| in the rst files
+rst_epilog = f"""
+.. |year| replace:: {year}
+"""
+html_static_path = ["_static"]
+html_last_updated_fmt = "%b %d, %Y"
+html_title = "PyLops"
+html_short_title = "PyLops"
+html_logo = "_static/pylops.png"
+html_favicon = "_static/favicon.ico"
+html_extra_path = []
+pygments_style = "default"
+add_function_parentheses = False
+html_show_sourcelink = False
+html_show_sphinx = True
+html_show_copyright = True
+
+# Theme config
+html_theme = "shibuya"
+html_theme_options = {
+    "accent_color": "teal",
+    "github_url": "https://github.com/PyLops/pylops",
+    "light_logo": "_static/pylops_b.png",
+    "dark_logo": "_static/pylops.png",
+}
+html_css_files = [
+    "css/custom.css",
+]
+
+html_context = {
+    "menu_links_name": "Repository",
+    "menu_links": [
+        (
+            '<i class="fa fa-github fa-fw"></i> Source Code',
+            "https://github.com/PyLops/pylops",
+        ),
+        (
+            '<i class="fa fa-users fa-fw"></i> Contributing',
+            "https://github.com/PyLops/pylops/blob/master/CONTRIBUTING.md",
+        ),
+    ],
+    # Custom variables to enable "Improve this page"" and "Download notebook"
+    # links
+    "doc_path": "docs/source",
+    "galleries": sphinx_gallery_conf["gallery_dirs"],
+    "gallery_dir": dict(
+        zip(sphinx_gallery_conf["gallery_dirs"], sphinx_gallery_conf["examples_dirs"], strict=True)
+    ),
+    "github_project": "PyLops",
+    "github_repo": "pylops",
+    "github_version": "master",
+}
